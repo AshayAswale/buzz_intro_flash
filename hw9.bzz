@@ -57,7 +57,7 @@ function step() {
 	same_t_done = 1
   # Debug message written on top of robot
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_argos
-  #debug.print("c=", count)
+  debug.print("c=", count)
   # Set the LED color to RED
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_kh4
 	#  set_leds(255, 0, 0)
@@ -84,6 +84,8 @@ function step() {
   #  set_wheels(left, right) # direct wheel speed control (cm/s)
   #  gotop(linear, angular)  # velocity vector in polar coordinates (cm/s, rad/s)
 #  gotoc(10.0, 0.0)           # velocity vector in cartesian coordinates (cm/s)
+	gotoc(10 - 10000*obst.x, -10000*obst.y)
+	
   # Send a message
   if(count > 100) {
     neighbors.broadcast("flash", 1)
