@@ -34,11 +34,17 @@ function init() {
   # Pick a random initial value for the counter
   math.rng.setseed(id)
   count = math.rng.uniform(0,99)
+  same_t_done = 0
   # Listen to messages about flashing
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_syntax_cheatsheet
   neighbors.listen("flash",
     function(topic, value, robot){
-      log("Got (", topic, ",", value, ") from robot id=", robot)
+
+if(value == 1 and count != 0 and same_t_done == 1)
+{
+count = count+0.5*count
+same_t_done = 0
+}
     })
 	# Draw the trajectory of the robot in green
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_argos
@@ -48,12 +54,13 @@ function init() {
 function step() {
   # Increase counter
   count = count + 1
+	same_t_done = 1
   # Debug message written on top of robot
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_argos
-  debug.print("c=", count)
+  #debug.print("c=", count)
   # Set the LED color to RED
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_kh4
-  set_leds(255, 0, 0)
+	#  set_leds(255, 0, 0)
   # Sum the proximity sensors, considering each as a vector
 	# The result is a vector that points to the "densest" obstacle direction
   obst = reduce(proximity,
@@ -76,14 +83,16 @@ function step() {
 	# See: https://the.swarming.buzz/wiki/doku.php?id=buzz_kh4
   #  set_wheels(left, right) # direct wheel speed control (cm/s)
   #  gotop(linear, angular)  # velocity vector in polar coordinates (cm/s, rad/s)
-  gotoc(10.0, 0.0)           # velocity vector in cartesian coordinates (cm/s)
+#  gotoc(10.0, 0.0)           # velocity vector in cartesian coordinates (cm/s)
   # Send a message
   if(count > 100) {
     neighbors.broadcast("flash", 1)
     count = 0
+		set_leds(255, 0, 0)
   }
   else {
     neighbors.broadcast("flash", 0)
+		set_leds(0, 0, 0)
   }
 }
 
